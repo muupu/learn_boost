@@ -96,7 +96,7 @@ void async_test(char t)
 	}
 }
 
-void main()
-{
-	async_test2();
-}
+//void main()
+//{
+//	async_test2();
+//}
