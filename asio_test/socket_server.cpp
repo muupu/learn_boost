@@ -36,7 +36,7 @@ void socket_server()
 	}
 }
 
-void main()
-{
-	socket_server();
-}
+//void main()
+//{
+//	socket_server();
+//}
