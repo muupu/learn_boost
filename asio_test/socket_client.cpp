@@ -11,7 +11,7 @@
 
 //IP地址和端点      
 //IP地址独立于TCP，UDP等通信协议，asio库使用类ip::address来表示IP地址，可以同时支持ipv4和ipv6两种地址。
-void test1()
+void socket_client_test1()
 {
 	boost::asio::ip::address addr = addr.from_string("127.0.0.1");
 	assert(addr.is_v4());
@@ -77,30 +77,31 @@ void client(boost::asio::io_service& ios)
 	}
 }
 //同步客户端
-void test2()
+void socket_client_test2()
 {
 	boost::asio::io_service ios;
 	a_timer at(ios, 5, boost::bind(client, boost::ref(ios)));
 	ios.run();
 }
-void test3()
+void socket_client_test3()
 {
 }
-void test(char t)
+void socket_client_test(char t)
 {
 	std::cout << "press key=====" << t << std::endl;
 	switch (t)
 	{
-	case '1':test1(); break;
-	case '2':test2(); break;
-	case '3':test3(); break;
+	case '1':socket_client_test1(); break;
+	case '2':socket_client_test2(); break;
+	case '3':socket_client_test3(); break;
 	case 27:
 	case 'q':exit(0); break;
 	default: std::cout << "default " << t << std::endl; break;
 	}
 }
-void main()
-{
-	while (1)
-		test(getch());
-}
+
+//void main()
+//{
+//	while (1)
+//		socket_client_test(getch());
+//}

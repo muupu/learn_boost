@@ -24,5 +24,8 @@
     <ClCompile Include="socket_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="async_socket_server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

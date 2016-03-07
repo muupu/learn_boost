@@ -9,7 +9,7 @@
 //using namespace boost;
 //using namespace boost::asio;
 
-void test1() {}
+void async_test1() {}
 
 //异步server
 //异步程序的处理流程与同步程序基本相同，
@@ -68,7 +68,7 @@ public:
 		std::cout << "send msg complete." << std::endl;
 	}
 };
-void test2()
+void async_test2()
 {
 	try
 	{
@@ -83,13 +83,13 @@ void test2()
 	}
 }
 
-void test(char t)
+void async_test(char t)
 {
 	std::cout << "press key=====" << t << std::endl;
 	switch (t)
 	{
-	case '1':test1(); break;
-	case '2':test2(); break;
+	case '1':async_test1(); break;
+	case '2':async_test2(); break;
 	case 27:
 	case 'q':exit(0); break;
 	default: std::cout << "default " << t << std::endl; break;
@@ -98,5 +98,5 @@ void test(char t)
 
 void main()
 {
-	test2();
+	async_test2();
 }
