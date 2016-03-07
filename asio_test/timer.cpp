@@ -2,6 +2,8 @@
 #include <iostream>  
 #include <boost/asio.hpp>  
 #include <boost/date_time/posix_time/posix_time.hpp>  
+#include <boost/function.hpp>   
+#include <boost/bind.hpp>  
 
 //同步定时器
 //可以把它与thread库的sleep()函数对比研究一下
@@ -46,10 +48,62 @@ void timer_test2()
 	//将与hello asio一起输出，说明run()是阻塞函数  
 	std::cout << "runned" << std::endl;
 }
-  
+
+//可以定时执行任意函数的定时器 a_timer(asyc timer)，
+//它持有一个asio定时器对象和一个计数器，还有一个function对象用来保存回调函数
+class a_timer
+{
+private:
+	int count, cout_max; //计数器成员变量  
+	boost::function<void()> f; //function对象，持有无参数无返回的可调用物  
+	boost::asio::deadline_timer t;//asio定时器  
+public:
+	//构造函数初始化成员变量，将计数器清理，设置计数器的上限，拷贝存储回调函数，并立即启动定时器  
+	//之所以要"立即"启动，是因为我们必须包装在io_service.run()之前至少有一个异步操作在执行，
+	//否则io_service.run()会因为没有事件处理而立即不等待返回。  
+	template<typename F>a_timer(boost::asio::io_service& ios, int x, F func) :f(func), cout_max(x), count(0), t(ios, boost::posix_time::microsec(500))//模板类型，可接受任意可调用物  
+	{
+		//命名空间下asio::placeholders的一个占位符error，他的作用类似于bind库的占位符_1,_2,用于传递errror_code值。
+		t.async_wait(boost::bind(&a_timer::call_func, this, boost::asio::placeholders::error));
+	}
+
+	//call_func()内部累加计数器，如果计数器未达到上限则调用function对象f
+	//然后重新设置定时器的终止时间，再次异步等待被调用，从而达到反复执行的目的。  
+	void call_func(const boost::system::error_code &)
+	{
+		if (count >= cout_max)
+		{
+			return;
+		}
+		++count;
+		f();
+		t.expires_at(t.expires_at() + boost::posix_time::millisec(500));//设置定时器的终止时间为0.5秒之后  
+		t.async_wait(boost::bind(&a_timer::call_func, this, boost::asio::placeholders::error));
+	}
+};
+
+void print1(int index)
+{
+	std::cout << "hello asio:" << index << std::endl;
+}
+
+void print2()
+{
+	std::cout << "hello boost" << std::endl;
+}
+
+void timer_test3()
+{
+	boost::asio::io_service ios;
+	a_timer a(ios, 10, boost::bind(print1, 2));//启用第一个定时器  
+	a_timer at(ios, 5, print2);//启用第二个定时器  
+	ios.run();//ios等待异步调用结束  
+}
+
 int main()  
 {  
 	//timer_test1();
-	timer_test2();
+	//timer_test2();
+	timer_test3();
 	return 0;  
 }  
