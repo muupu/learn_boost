@@ -20,10 +20,36 @@ void timer_test1()
 
 	std::cout << "Hello, world!\n";
 }
+
+void myprint(boost::system::error_code ec)
+{
+	std::cout << "hello asio" << std::endl;
+}
+
+//异步定时器
+//代码大致与同步定时器相同，增加了回调函数，并使用io_service_run()和定时器的async_wait()
+//首先我们要定义回调函数，asio库要求回调函数只能有一个参数，而且这个参数必须是const asio::error_code&类型
+void timer_test2()
+{
+	boost::asio::io_service ios;
+	boost::asio::deadline_timer t(ios, boost::posix_time::seconds(3));
+
+	//异步等待，传入回调函数，立即返回  
+	//它通知io_service异步的执行IO操作，并且注册了回调函数，用于在IO操作完成时有事件多路分离器分派返回值(error_code)调用。  
+	t.async_wait(myprint);
+	std::cout << "it show before t expired." << std::endl;
+
+	//最后我们必须调用io_service的run()成员函数，它启动前摄器的事件处理循环，阻塞等待所有的操作完成并分派事件。
+	//如果不调用run()那么虽然被异步执行了，但没有一个等待他完成的机制，回调函数将得不到执行的机会。 
+	ios.run();
+
+	//将与hello asio一起输出，说明run()是阻塞函数  
+	std::cout << "runned" << std::endl;
+}
   
 int main()  
 {  
-	timer_test1();
-  
+	//timer_test1();
+	timer_test2();
 	return 0;  
 }  
