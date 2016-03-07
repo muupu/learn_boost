@@ -100,10 +100,10 @@ void timer_test3()
 	ios.run();//ios等待异步调用结束  
 }
 
-int main()  
-{  
-	//timer_test1();
-	//timer_test2();
-	timer_test3();
-	return 0;  
-}  
+//int main()  
+//{  
+//	//timer_test1();
+//	//timer_test2();
+//	timer_test3();
+//	return 0;  
+//}  
